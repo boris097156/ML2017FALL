@@ -13,3 +13,4 @@ for word in line:
 with open(output_name, 'w') as out:
 	for no, word in enumerate(dic):
 		out.write(word + ' ' + str(no) + ' ' + str(dic[word]) + '\n')
+f.close()
