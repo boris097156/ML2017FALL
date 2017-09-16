@@ -11,6 +11,10 @@ for word in line:
 	else:
 		dic[word] = 1
 with open(output_name, 'w') as out:
-	for no, word in enumerate(dic):
-		out.write(word + ' ' + str(no) + ' ' + str(dic[word]) + '\n')
+	index = 0
+	for word in line:
+		if word in dic:
+			out.write(word + ' ' + str(index) + ' ' + str(dic[word]) + '\n')
+			index += 1
+			del dic[word]
 f.close()
