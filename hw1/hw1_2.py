@@ -2,13 +2,7 @@ import csv
 import math
 import numpy as np
 
-'''
-******try******
-validation sets
-stochastic
-more features
-more power(次方)
-'''
+#1 feature * 9 hours
 
 feature_weight = [[] for _ in range(18)]
 
@@ -56,7 +50,7 @@ train_x = []
 train_y = []
 
 #setup basic variables
-learn_rate = 0.5
+learn_rate = 0.3
 feature_amount = 163
 weight = np.full((163,), 0.5, dtype=np.float32)	#shape of (163,)
 
@@ -67,7 +61,6 @@ for month in range(12):
 		for item in range(18):
 			for hour in range(9):
 				train_x[471*month+hour_start].append(train_Data[item][480*month+hour_start+hour])
-				#train_x[471*month+hour_start].append(pow(train_Data[item][480*month+hour_start+hour]))
 		train_y.append(train_Data[9][480*month+hour_start+9])
 
 #5652 = amount of training datas	163 = 1bias+9hours*18items
@@ -89,7 +82,7 @@ with open('log.txt', 'w') as log:
 		avg_lost = np.sum(np.square(dif))/data_amount
 		#print(avg_lost)
 		log.write(str(laps) + '\t' + str(avg_lost) + '\n') 
-		if abs(avg_lost) <= 0.1162 or laps>=100000:
+		if abs(avg_lost) <= 0.1162 or laps>=120000:
 			print('laps: ' + str(laps) + '\t' + 'avg_lost: ' + str(avg_lost))
 			break;
 		gra = np.dot(train_x.transpose(), dif)
@@ -98,7 +91,7 @@ with open('log.txt', 'w') as log:
 		weight -= learn_rate*gra/ada
 		laps += 1 
 
-#Read in test_X.csv to list of 18 lists, every sublist represents an item.
+#Read in test.csv to list of 18 lists, every sublist represents an item.
 test_Data = [[] for _ in range(18)]
 with open('test.csv', 'r', encoding='ISO-8859-1') as csv_file:
 	raw_file = csv.reader(csv_file , delimiter=",")
@@ -114,7 +107,7 @@ with open('test.csv', 'r', encoding='ISO-8859-1') as csv_file:
 #feature scaling of test_Data(18,2160)
 feature_scaling(2160, test_Data, 1)
 
-#Reform from (18,2160) to (240, 1+162)
+#Reform from (18,2160) to (240, 163)
 test_x = []
 for test_id in range(240):
 	test_x.append([1])
