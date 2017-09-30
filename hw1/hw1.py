@@ -58,7 +58,7 @@ train_y = []
 #setup basic variables
 learn_rate = 0.5
 feature_amount = 163
-weight = np.full((163,), 0.5, dtype=np.float32)	#shape of (163,)
+weight = np.full((163,), 0.5, dtype=np.float32)
 
 #Reshape train_Data(18,5760) to train_x(5652,163) and train_y.(5652,)
 for month in range(12):
@@ -67,7 +67,6 @@ for month in range(12):
 		for item in range(18):
 			for hour in range(9):
 				train_x[471*month+hour_start].append(train_Data[item][480*month+hour_start+hour])
-				#train_x[471*month+hour_start].append(pow(train_Data[item][480*month+hour_start+hour]))
 		train_y.append(train_Data[9][480*month+hour_start+9])
 
 #5652 = amount of training datas	163 = 1bias+9hours*18items

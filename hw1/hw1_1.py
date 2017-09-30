@@ -83,6 +83,8 @@ with open('log.txt', 'w') as log:
 		#print(avg_lost)
 		log.write(str(laps) + '\t' + str(avg_lost) + '\n') 
 		if abs(avg_lost) <= 0.1162 or laps>=120000:
+			print('learn_rate:' + str(learn_rate))
+			print('features:' + str(feature_amount))
 			print('laps: ' + str(laps) + '\t' + 'avg_lost: ' + str(avg_lost))
 			break;
 		gra = np.dot(train_x.transpose(), dif)
