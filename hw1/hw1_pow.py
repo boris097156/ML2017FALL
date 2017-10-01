@@ -81,7 +81,7 @@ laps = 0
 learn_rate = 0.5
 data_amount = 5652
 
-with open('hw1.log', 'w') as log:
+with open('log_pow.txt', 'w') as log:
 	while(1):
 		my_y = np.dot(train_x, weight)
 		dif = my_y-train_y
@@ -89,9 +89,9 @@ with open('hw1.log', 'w') as log:
 		avg_lost = np.sum(np.square(dif))/data_amount
 		#print(avg_lost)
 		log.write(str(laps) + '\t' + str(avg_lost) + '\n')
-		if laps%30000 == 0:
-			learn_rate = learn_rate/10
-		if abs(avg_lost) <= 0.1:
+	#	if laps%30000 == 0:
+	#		learn_rate = learn_rate/10
+		if abs(avg_lost) <= 0.1 or laps>12000:
 			break;
 		gra = np.dot(train_x.transpose(), dif)/data_amount
 		prev_gra += gra**2
@@ -102,7 +102,7 @@ with open('hw1.log', 'w') as log:
 
 #Read in test_X.csv to list of 18 lists, every sublist represents an item.
 test_Data = [[] for _ in range(18)]
-with open('test_X.csv', 'r', encoding='ISO-8859-1') as csv_file:
+with open('test.csv', 'r', encoding='ISO-8859-1') as csv_file:
 	raw_file = csv.reader(csv_file , delimiter=",")
 	n_row = 0;
 	for row in raw_file:
