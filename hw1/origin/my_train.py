@@ -12,7 +12,7 @@ more power(次方)
 
 #Basic variables
 ITEM_NUM = 18
-DATA_NUM = 5760
+TRAIN_NUM = 5652
 LOG_NAME = 'log/log.txt'
 WLOG_NAME = 'weight.out'
 FWLOG_NAME = 'fs_weight.out'
@@ -24,7 +24,7 @@ INIT_W = 0.5
 
 def log_init():
 	with open(LOG_NAME, 'w') as log:
-		log.write('train/valid: ' + str((DATA_NUM-VALID_NUM)) + '/'  + str(VALID_NUM) + '\n')
+		log.write('train/valid: ' + str((TRAIN_NUM-VALID_NUM)) + '/'  + str(VALID_NUM) + '\n')
 		log.write('learn_rate:' + str(INIT_LR) + '\n')
 		log.write('features:' + str(FEATURE_NUM) + '\n')
 
@@ -62,7 +62,7 @@ def train(train_x, train_y, weight):
 			laps += 1
 			my_y = np.dot(train_x, weight)
 			dif = my_y-train_y
-			avg_lost = np.sum(np.square(dif))/DATA_NUM
+			avg_lost = np.sum(np.square(dif))/TRAIN_NUM
 			#logging
 			log.write(str(laps) + '\t' + str(avg_lost) + '\n') 
 			if abs(avg_lost) <= 0.1161 or laps >= 9000:
@@ -72,6 +72,16 @@ def train(train_x, train_y, weight):
 			prev_gra += gra**2
 			ada = np.sqrt(prev_gra)
 			weight -= learn_rate*gra/ada
+
+def cal_RMSE(my_y, real_y):
+	num = my_y.shape[0]
+	RMSE = (  np.sum((my_y - real_y)**2)  /num)**0.5
+	return RMSE
+
+def valid(valid_x, valid_y, weight, fs_weight):
+	my_y = np.dot(valid_x, weight)
+	fs.scale_up(valid_x, fs_weight)
+	print(cal_RMSE(my_y, valid_y))
 
 def main():
 	log_init()
@@ -94,10 +104,10 @@ def main():
 	data_x = np.array(data_x)
 	data_y = np.array(data_y)
 	
-	#train & valid	
+	#train & valid
 	weight = np.full((FEATURE_NUM,), INIT_W, dtype=np.float32)
-	train(data_x, data_y, weight)
-	#valid()
+	train(data_x[VALID_NUM:, :], data_y[VALID_NUM:], weight)
+	valid(data_x[:VALID_NUM, :], data_y[:VALID_NUM], weight, fs_weight)
 
 	np.savetxt(WLOG_NAME, weight, delimiter=',')
 
