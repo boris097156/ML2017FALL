@@ -1,16 +1,19 @@
 import matplotlib.pyplot as plt
 import sys
 
-f_log = 'log.txt'
+DIR = 'log/'
+LOG = DIR + 'log.txt'
+PNG = DIR + 'log.png'
+DPNG = DIR + 'log_d.png'
 start_step = 10
-detailed_step = 5000
+detailed_step = int(sys.argv[1])
 
 steps = []
 lost = []
 
-with open(f_log, 'r') as f:
+with open(LOG, 'r') as f:
 	content = f.readlines()
-	for row in content[2:]:
+	for row in content[3:]:
 		line = row.strip().split('\t')
 		steps.append(int(line[0]))
 		lost.append(float(line[1]))
@@ -22,7 +25,7 @@ plt.xlabel("steps")
 plt.ylabel("L")
 plt.plot(start_steps, start_lost, color='r')
 plt.tight_layout()
-plt.savefig('log.png')
+plt.savefig(PNG)
 
 plt.close('all')
 
@@ -33,4 +36,4 @@ plt.xlabel("steps")
 plt.ylabel("L")
 plt.plot(detailed_steps, detailed_lost, color='r')
 plt.tight_layout()
-plt.savefig('log_detailed.png')
+plt.savefig(DPNG)

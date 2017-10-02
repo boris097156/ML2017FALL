@@ -13,7 +13,7 @@ more power(次方)
 #Basic variables
 ITEM_NUM = 18
 DATA_NUM = 5760
-LOG_NAME = 'log.txt'
+LOG_NAME = 'log/log.txt'
 WLOG_NAME = 'weight.out'
 FWLOG_NAME = 'fs_weight.out'
 
@@ -65,7 +65,7 @@ def train(train_x, train_y, weight):
 			avg_lost = np.sum(np.square(dif))/DATA_NUM
 			#logging
 			log.write(str(laps) + '\t' + str(avg_lost) + '\n') 
-			if abs(avg_lost) <= 0.11623:
+			if abs(avg_lost) <= 0.1161 or laps >= 9000:
 				print('laps: ' + str(laps) + '\t' + 'avg_lost: ' + str(avg_lost))
 				return
 			gra = np.dot(train_x.transpose(), dif)

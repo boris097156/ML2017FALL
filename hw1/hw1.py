@@ -1,11 +1,12 @@
+import sys
 import csv
 import math
 import numpy as np
 
 '''
-******try******
 validation sets
 stochastic
+divide into train & test parts
 more features
 more power(次方)
 '''
@@ -70,15 +71,21 @@ for month in range(12):
 		train_y.append(train_Data[9][480*month+hour_start+9])
 
 #5652 = amount of training datas	163 = 1bias+9hours*18items
-train_x = np.array(train_x)  #shape of (5652,163)
-train_y = np.array(train_y)  #shape of (5652,)
+origin_train_x = np.array(train_x)  #shape of (5652,163)
+origin_train_y = np.array(train_y)  #shape of (5652,)
 
 #training
 prev_gra = np.zeros((163,), dtype=np.float32)
 laps = 0
 data_amount = 5652
+valid_amount = sys.argv[1]
+valid_x = origin_train_x[:valid_amount]
+valid_y = origin_train_y[:valid_amount]
+train_x = origin_train_x[valid_amount:]
+trian_y = origin_train_y[valid_amount:]
 
 with open('log.txt', 'w') as log:
+	log.write('validation amount: ' + str(valid_amount) + '\n')
 	log.write('learn_rate:' + str(learn_rate) + '\n')
 	log.write('features:' + str(feature_amount) + '\n')
 	while(1):
@@ -88,8 +95,10 @@ with open('log.txt', 'w') as log:
 		avg_lost = np.sum(np.square(dif))/data_amount
 		#print(avg_lost)
 		log.write(str(laps) + '\t' + str(avg_lost) + '\n') 
-		if abs(avg_lost) <= 0.1162 or laps>=100000:
+		if abs(avg_lost) <= 0.11623:
 			print('laps: ' + str(laps) + '\t' + 'avg_lost: ' + str(avg_lost))
+			valid_y_ = np.dot(valid_x, weight)
+			
 			break;
 		gra = np.dot(train_x.transpose(), dif)
 		prev_gra += gra**2
