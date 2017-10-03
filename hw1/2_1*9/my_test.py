@@ -32,7 +32,7 @@ def main():
 	test_data = my.read_csv(INPUT_NAME, 2, 11)
 
 	#feature scaling
-	fs_weight = np.loadtxt(FWLOG_NAME, delimiter=',')
+	fs_weight = np.loadtxt(FWLOG_NAME, delimiter=',').reshape(CARE_ITEM,2)
 	my.scale_down(test_data, fs_weight)
 	
 	#reshape test
