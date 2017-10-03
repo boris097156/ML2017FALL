@@ -1,0 +1,6 @@
+train/valid: 5000/652
+features: 163
+care hour: 9
+care item: 18
+learn_rate: 0.5
+init_weight: 0.5
