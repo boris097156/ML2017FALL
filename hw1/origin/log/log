@@ -2,5 +2,9 @@ train/valid: 5000/652
 features: 163
 care hour: 9
 care item: 18
-learn_rate: 0.5
-init_weight: 0.5
+learn_rate: 0.2380641671963949
+init_weight: 0.946296551559297
+laps: 3000	avg_lost: 0.0845806488393
+laps: 3000	avg_lost: 0.0956609650838
+laps: 3000	avg_lost: 0.0963859030887
+laps: 3000	avg_lost: 0.0953361060715

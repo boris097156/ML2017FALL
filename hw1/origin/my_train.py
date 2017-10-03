@@ -18,15 +18,17 @@ TRAIN_NAME = '../train.csv'
 CARE_HOUR = my.CARE_HOUR
 CARE_ITEM = my.CARE_ITEM
 FEATURE_NUM = my.FEATURE_NUM
+PM_POSITION = my.PM_POSITION
 
 #training variables
-DATA_NUM = 5760 - CARE_HOUR*12
+ORIGIN_DATA_NUM = 24*20*12
+DATA_NUM = ORIGIN_DATA_NUM - CARE_HOUR*12
 VALID_NUM = int(sys.argv[1])
 TRAIN_NUM = DATA_NUM - VALID_NUM
 BATCH_SIZE = 100
-INIT_LR = 0.5
-INIT_W = 0.5
-THR_LAP = 1000
+INIT_LR = np.random.random_sample()
+INIT_W = np.random.random_sample()
+THR_LAP = 3000
 THR_LOST = 0
 
 def log_init(log_name):
@@ -47,7 +49,7 @@ def reshape_train(train_data, data_x, data_y):
 			for item in range(CARE_ITEM):
 				for hour in range(CARE_HOUR):
 					data_x[hour_flow*month+hour_start][item*CARE_HOUR + hour + 1] = train_data[item][480*month+hour_start+hour]
-			data_y[hour_flow*month+hour_start] = train_data[9][480*month+hour_start+CARE_HOUR]
+			data_y[hour_flow*month+hour_start] = train_data[PM_POSITION][480*month+hour_start+CARE_HOUR]
 
 def valid(valid_x, valid_y, weight, fs_weight):
 	my_y = my.cal_y(valid_x, weight, fs_weight)
@@ -63,6 +65,7 @@ def train(data_x, data_y, weight, fs_weight, i):
 	last_time = False
 	if i<0:
 		last_time = True
+		i = 'mean'
 	log_name = LOG_NAME + str(i) + '.txt'
 	train_x = data_x[:TRAIN_NUM, :]
 	train_y = data_y[:TRAIN_NUM]
@@ -88,7 +91,8 @@ def train(data_x, data_y, weight, fs_weight, i):
 				ada = np.sqrt(prev_gra)
 				weight -= learn_rate*gra/ada
 			if abs(avg_lost) <= THR_LOST or laps >= THR_LAP:
-				print('laps: ' + str(laps) + '\t' + 'avg_lost: ' + str(avg_lost))
+				with open(LOG_NAME, 'a') as log_log:
+					log_log.write('laps: ' + str(laps) + '\t' + 'avg_lost: ' + str(avg_lost) + '\n')
 				return
 
 def opt_train(data_x, data_y, weight, fs_weight):

@@ -10,10 +10,14 @@ FWLOG_NAME = 'fs_weight.out'
 
 CARE_HOUR = 9
 CARE_ITEM = 18
+CARE_ITEM_START = 0
+if CARE_ITEM == 1:
+	CARE_ITEM_START = 9
+PM_POSITION = 9 - CARE_ITEM_START
 FEATURE_NUM = 1 + CARE_HOUR*CARE_ITEM
 
 def read_csv(file_name, start, end):
-	my_data = [[] for _ in range(ITEM_NUM)]
+	origin_data = [[] for _ in range(ITEM_NUM)]
 	with open(file_name, 'r', encoding='ISO-8859-1') as csv_file:
 		raw_file = csv.reader(csv_file , delimiter=",")
 		#discard 1st line of train data
@@ -23,16 +27,19 @@ def read_csv(file_name, start, end):
 		for row in raw_file:
 			for item in range(start,end):
 				if row[item] != "NR":
-					my_data[n_row%ITEM_NUM].append( float( row[item] ) )
+					origin_data[n_row%ITEM_NUM].append( float( row[item] ) )
 				else:
-					my_data[n_row%ITEM_NUM].append( float( 0 ) )	
+					origin_data[n_row%ITEM_NUM].append( float( 0 ) )	
 			n_row += 1
+	my_data = []
+	for i in range(CARE_ITEM):
+		my_data.append(origin_data[CARE_ITEM_START + i])	
 	return np.array(my_data, dtype=np.float64)
 
 def cal_weight(train_data):
-	fs_weight = [[] for _ in range(ITEM_NUM)]
+	fs_weight = [[] for _ in range(CARE_ITEM)]
 	train_size = train_data.shape[1]
-	for i in range(ITEM_NUM):
+	for i in range(CARE_ITEM):
 		my_sum = np.sum(train_data[i])
 		my_avg = my_sum/(train_size)
 		my_squ = np.sum((train_data[i]-my_avg)**2)
@@ -43,7 +50,7 @@ def cal_weight(train_data):
 
 def scale_down(my_data, fs_weight):
 	data_size = my_data.shape[1]
-	for i in range(ITEM_NUM):
+	for i in range(CARE_ITEM):
 		my_data[i] -= fs_weight[i][0]
 		my_data[i] /= fs_weight[i][1]
 	return
@@ -51,8 +58,8 @@ def scale_down(my_data, fs_weight):
 def scale_up(my_data, fs_weight):
 	data_size = my_data.shape[0]
 	for i in range(data_size):
-		my_data[i] *= fs_weight[9][1]
-		my_data[i] += fs_weight[9][0]
+		my_data[i] *= fs_weight[PM_POSITION][1]
+		my_data[i] += fs_weight[PM_POSITION][0]
 	return
 
 def cal_RMSE(my_y, real_y):
