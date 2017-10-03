@@ -40,7 +40,7 @@ def log_init(log_name):
 		log.write('care item: ' + str(CARE_ITEM) + '\n')
 		log.write('learn_rate: ' + str(ELTA) + '\n')
 		log.write('init_weight: ' + str(INIT_W) + '\n')
-		log.write('landa' + str(LANDA) + '\n')
+		log.write('landa: ' + str(LANDA) + '\n')
 
 def reshape_train(train_data, data_x, data_y):
 	hour_flow = 24*20 - CARE_HOUR
