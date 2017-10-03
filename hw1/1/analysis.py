@@ -2,38 +2,25 @@ import matplotlib.pyplot as plt
 import sys
 
 DIR = 'log/'
-LOG = DIR + 'log.txt'
-PNG = DIR + 'log.png'
-DPNG = DIR + 'log_d.png'
-start_step = 10
-detailed_step = int(sys.argv[1])
+PNG = DIR + 'log_graph.png'
+my_color = ['r', 'g', 'b']
 
-steps = []
-lost = []
+def add_graph(i):
+	steps = []
+	rmse = []
+	log_name = DIR + 'log' + str(i) + '.txt'
+	with open(log_name, 'r') as f:
+		content = f.readlines()
+		for row in content[6:]:
+			line = row.strip().split('\t')
+			steps.append(int(line[0]))
+			rmse.append(float(line[1]))
+	plt.plot(steps, rmse, color=my_color[i])
 
-with open(LOG, 'r') as f:
-	content = f.readlines()
-	for row in content[3:]:
-		line = row.strip().split('\t')
-		steps.append(int(line[0]))
-		lost.append(float(line[1]))
-
-start_lost = lost[start_step:]
-start_steps = steps[start_step:]
-
+plt.figure(figsize=(18,8))
 plt.xlabel("steps")
-plt.ylabel("L")
-plt.plot(start_steps, start_lost, color='r')
+plt.ylabel("RSME")
+for i in range(3):
+	add_graph(i)
 plt.tight_layout()
 plt.savefig(PNG)
-
-plt.close('all')
-
-detailed_lost = lost[detailed_step:]
-detailed_steps = steps[detailed_step:]
-
-plt.xlabel("steps")
-plt.ylabel("L")
-plt.plot(detailed_steps, detailed_lost, color='r')
-plt.tight_layout()
-plt.savefig(DPNG)
