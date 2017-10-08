@@ -21,8 +21,8 @@ DATA_NUM = ORIGIN_DATA_NUM - CARE_HOUR*12
 VALID_NUM = int(sys.argv[1])
 TRAIN_NUM = DATA_NUM - VALID_NUM
 BATCH_SIZE = 100
-ELTA = np.random.random_sample()
-INIT_W = np.random.random_sample()
+ELTA = np.random.random_sample()/2
+INIT_W = np.random.random_sample()/2
 LANDA = 0.0001
 THR_LAP = 2000
 THR_RMSE = 0
@@ -48,9 +48,10 @@ def reshape_train(train_data, data_x, data_y):
 					data_x[hour_flow*month+hour_start][item*CARE_HOUR + hour + 1] = train_data[item][480*month+hour_start+hour]
 			data_y[hour_flow*month+hour_start] = train_data[PM_POSITION][480*month+hour_start+CARE_HOUR]
 
-def cal_RMSE(my_y, real_y, weight):
-	num = my_y.shape[0]
-	RMSE = np.sqrt((np.sum((my_y-real_y)**2)/num))
+def cal_RMSE(my_y, small_y, fs_weight):
+	real_y = np.copy(small_y)
+	my.scale_up(real_y, fs_weight)
+	RMSE = np.sqrt((np.sum(np.square(my_y-real_y))/real_y.shape[0]))
 	return RMSE
 
 def gen_batch(train_x, train_y, batch_x, batch_y):
@@ -86,14 +87,14 @@ def train(data_x, data_y, weight, fs_weight, i):
 				weight -= eta*gra/sigma		
 			#record validation's RMSE
 			if laps%10==0 and no_valid==False:
-				my_y = my.cal_y(data_x[TRAIN_NUM:, :], weight, fs_weight)
-				rmse = cal_RMSE(my_y, data_y[TRAIN_NUM:], weight)
+				my_y = my.cal_y(data_x[TRAIN_NUM:, :], weight, fs_weight)	
+				rmse = cal_RMSE(my_y, data_y[TRAIN_NUM:], fs_weight)
 				log.write(str(laps) + '\t' + str(rmse) + '\n')
 			#record last RMSE
 			if abs(rmse) <= THR_RMSE or laps >= THR_LAP:
-				if no_valid == True:				
-					my_y = my.cal_y(data_x[TRAIN_NUM:, :], weight, fs_weight)
-					rmse = cal_RMSE(my_y, data_y[TRAIN_NUM:], weight)
+				if no_valid == True:
+					my_y = my.cal_y(data_x[TRAIN_NUM:, :], weight, fs_weight)	
+					rmse = cal_RMSE(my_y, data_y[TRAIN_NUM:], fs_weight)
 				with open(LOG_NAME, 'a') as log_log:
 					log_log.write('laps: ' + str(laps) + '\t' + 'RMSE: ' + str(rmse) + '\n')
 				return
@@ -101,6 +102,7 @@ def train(data_x, data_y, weight, fs_weight, i):
 def opt_train(data_x, data_y, weight, fs_weight):
 	for i in range(3):
 		train(data_x, data_y, weight, fs_weight, i)
+		weight = np.full((FEATURE_NUM,), INIT_W, dtype=np.float64)
 	TRAIN_NUM = DATA_NUM
 	train(data_x, data_y, weight, fs_weight, -1)
 
