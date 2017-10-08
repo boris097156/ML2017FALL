@@ -1,17 +1,17 @@
 #! /bin/bash
-DLAP="$1"
-DIR="log"
-ANALYSIS="analysis.py"
-LOG="$DIR/log"
-GRAPH="$DIR/log_graph.png"
+OUTPUT_DIR="$1"
+LOG_DIR="$OUTPUT_DIR/log"
+LOG="$LOG_DIR/log"
+GRAPH="$LOG_DIR/log_graph.png"
+OUTPUT="$OUTPUT_DIR/res.csv"
 
-rm -rf "$DIR"
-mkdir "$DIR"
+rm -rf "$LOG_DIR"
+mkdir "$LOG_DIR"
 echo "training"
 python3 my_train.py 652
 echo "testing"
-python3 my_test.py "../test.csv" res.csv
+python3 my_test.py "../test.csv" "$OUTPUT"
 echo "analysing"
-python3 "$ANALYSIS"
+python3 analysis.py "$OUTPUT_DIR"
 cat "$LOG"
 open "$GRAPH"

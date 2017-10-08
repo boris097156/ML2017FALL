@@ -1,15 +1,15 @@
+import sys
 import matplotlib.pyplot as plt
 from my_function import LOG_NUM
 
-DIR = 'log/'
+DIR = sys.argv[1] + '/log/'
 PNG = DIR + 'log_graph.png'
-#LOG_NUM = 3
-my_color = ['r', 'g', 'b', 'k']
+my_color = ['k', 'g', 'b', 'r']
 
 def read_log(steps, rmse, log_name):
 	with open(log_name, 'r') as f:
 		content = f.readlines()
-		for row in content[6:]:
+		for row in content:
 			line = row.strip().split('\t')
 			steps.append(int(line[0]))
 			rmse.append(float(line[1]))

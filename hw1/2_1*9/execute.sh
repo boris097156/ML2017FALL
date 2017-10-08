@@ -2,7 +2,8 @@
 DLAP="$1"
 DIR="log"
 ANALYSIS="analysis.py"
-LOG="$DIR/log_graph.png"
+LOG="$DIR/log"
+GRAPH="$DIR/log_graph.png"
 
 rm -rf "$DIR"
 mkdir "$DIR"
@@ -12,4 +13,5 @@ echo "testing"
 python3 my_test.py "../test.csv" res.csv
 echo "analysing"
 python3 "$ANALYSIS"
-open "$LOG"
+cat "$LOG"
+open "$GRAPH"

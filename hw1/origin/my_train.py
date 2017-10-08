@@ -3,11 +3,6 @@ import sys
 import numpy as np
 import my_function as my
 
-''' TO-DO list
-more features
-more power(次方)
-'''
-
 #Paths
 LOG_NAME = my.LOG_NAME
 WLOG_NAME = my.WLOG_NAME
@@ -26,10 +21,11 @@ DATA_NUM = ORIGIN_DATA_NUM - CARE_HOUR*12
 VALID_NUM = int(sys.argv[1])
 TRAIN_NUM = DATA_NUM - VALID_NUM
 BATCH_SIZE = 100
-INIT_LR = np.random.random_sample()
+ELTA = np.random.random_sample()
 INIT_W = np.random.random_sample()
-THR_LAP = 3000
-THR_LOST = 0
+LANDA = 0.0001
+THR_LAP = 2000
+THR_RMSE = 0
 
 def log_init(log_name):
 	with open(log_name, 'w') as log:
@@ -37,8 +33,9 @@ def log_init(log_name):
 		log.write('features: ' + str(FEATURE_NUM) + '\n')
 		log.write('care hour: ' + str(CARE_HOUR) + '\n')
 		log.write('care item: ' + str(CARE_ITEM) + '\n')
-		log.write('learn_rate: ' + str(INIT_LR) + '\n')
+		log.write('learn_rate: ' + str(ELTA) + '\n')
 		log.write('init_weight: ' + str(INIT_W) + '\n')
+		log.write('landa: ' + str(LANDA) + '\n')
 
 def reshape_train(train_data, data_x, data_y):
 	hour_flow = 24*20 - CARE_HOUR
@@ -51,9 +48,10 @@ def reshape_train(train_data, data_x, data_y):
 					data_x[hour_flow*month+hour_start][item*CARE_HOUR + hour + 1] = train_data[item][480*month+hour_start+hour]
 			data_y[hour_flow*month+hour_start] = train_data[PM_POSITION][480*month+hour_start+CARE_HOUR]
 
-def valid(valid_x, valid_y, weight, fs_weight):
-	my_y = my.cal_y(valid_x, weight, fs_weight)
-	return my.cal_RMSE(my_y, valid_y)
+def cal_RMSE(my_y, real_y, weight):
+	num = my_y.shape[0]
+	RMSE = np.sqrt((np.sum((my_y-real_y)**2)/num))
+	return RMSE
 
 def gen_batch(train_x, train_y, batch_x, batch_y):
 	choice = np.random.choice(TRAIN_NUM, BATCH_SIZE, replace=False)
@@ -62,10 +60,10 @@ def gen_batch(train_x, train_y, batch_x, batch_y):
 		batch_y[i] = train_y[choice[i]]
 
 def train(data_x, data_y, weight, fs_weight, i):
-	last_time = False
+	no_valid = False
 	if i<0:
-		last_time = True
-		i = 'mean'
+		no_valid = True
+		i = '_no_valid'
 	log_name = LOG_NAME + str(i) + '.txt'
 	train_x = data_x[:TRAIN_NUM, :]
 	train_y = data_y[:TRAIN_NUM]
@@ -74,25 +72,30 @@ def train(data_x, data_y, weight, fs_weight, i):
 
 	with open(log_name, 'a') as log:
 		prev_gra = np.zeros((FEATURE_NUM,), dtype=np.float64)
-		learn_rate = INIT_LR
-		laps=0
+		eta = ELTA
+		rmse = 1000
+		laps = 0
 		while(1):
 			laps += 1
-			if laps%10==0 and last_time==False:
-				RMSE = valid(data_x[TRAIN_NUM:, :], data_y[TRAIN_NUM:], weight, fs_weight)
-				log.write(str(laps) + '\t' + str(RMSE) + '\n')
 			for i in range(int(TRAIN_NUM/BATCH_SIZE)):
 				gen_batch(train_x, train_y, batch_x, batch_y)
 				my_y = np.dot(batch_x, weight)
-				dif = my_y-batch_y
-				avg_lost = np.sum(np.square(dif))/BATCH_SIZE
-				gra = np.dot(batch_x.transpose(), dif)
+				gra = 2*(np.dot(batch_x.transpose(), (my_y-batch_y)) + LANDA*weight)
 				prev_gra += gra**2
-				ada = np.sqrt(prev_gra)
-				weight -= learn_rate*gra/ada
-			if abs(avg_lost) <= THR_LOST or laps >= THR_LAP:
+				sigma = np.sqrt(prev_gra)
+				weight -= eta*gra/sigma		
+			#record validation's RMSE
+			if laps%10==0 and no_valid==False:
+				my_y = my.cal_y(data_x[TRAIN_NUM:, :], weight, fs_weight)
+				rmse = cal_RMSE(my_y, data_y[TRAIN_NUM:], weight)
+				log.write(str(laps) + '\t' + str(rmse) + '\n')
+			#record last RMSE
+			if abs(rmse) <= THR_RMSE or laps >= THR_LAP:
+				if no_valid == True:				
+					my_y = my.cal_y(data_x[TRAIN_NUM:, :], weight, fs_weight)
+					rmse = cal_RMSE(my_y, data_y[TRAIN_NUM:], weight)
 				with open(LOG_NAME, 'a') as log_log:
-					log_log.write('laps: ' + str(laps) + '\t' + 'avg_lost: ' + str(avg_lost) + '\n')
+					log_log.write('laps: ' + str(laps) + '\t' + 'RMSE: ' + str(rmse) + '\n')
 				return
 
 def opt_train(data_x, data_y, weight, fs_weight):

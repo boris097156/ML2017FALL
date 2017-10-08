@@ -28,8 +28,8 @@ TRAIN_NUM = DATA_NUM - VALID_NUM
 BATCH_SIZE = 100
 ELTA = np.random.random_sample()
 INIT_W = np.random.random_sample()
-LANDA = 0.1
-THR_LAP = 3000
+LANDA = 0.01
+THR_LAP = 10000
 THR_RMSE = 0
 
 def log_init(log_name):

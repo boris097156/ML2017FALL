@@ -4,12 +4,13 @@ import numpy as np
 #Basic variables
 ITEM_NUM = 18
 LOG_NUM = 3
-LOG_NAME = 'log/log'
-WLOG_NAME = 'weight.out'
-FWLOG_NAME = 'fs_weight.out'
+DIR = '5*1'
+LOG_NAME = DIR + '/log/log'
+WLOG_NAME = DIR + '/weight.out'
+FWLOG_NAME = DIR + '/fs_weight.out'
 
-CARE_HOUR = 9
-CARE_ITEM = 18
+CARE_HOUR = 5
+CARE_ITEM = 1
 CARE_ITEM_START = 0
 if CARE_ITEM == 1:
 	CARE_ITEM_START = 9
@@ -61,11 +62,6 @@ def scale_up(my_data, fs_weight):
 		my_data[i] *= fs_weight[PM_POSITION][1]
 		my_data[i] += fs_weight[PM_POSITION][0]
 	return
-
-def cal_RMSE(my_y, real_y):
-	num = my_y.shape[0]
-	RMSE = (np.sum((my_y-real_y)**2)/num)**0.5
-	return RMSE
 
 def cal_y(my_x, weight, fs_weight):
 	my_y = np.dot(my_x, weight)
