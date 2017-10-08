@@ -4,13 +4,13 @@ import numpy as np
 #Basic variables
 ITEM_NUM = 18
 LOG_NUM = 3
-DIR = '5*1'
+DIR = '5*18'
 LOG_NAME = DIR + '/log/log'
 WLOG_NAME = DIR + '/weight.out'
 FWLOG_NAME = DIR + '/fs_weight.out'
 
 CARE_HOUR = 5
-CARE_ITEM = 1
+CARE_ITEM = 18
 CARE_ITEM_START = 0
 if CARE_ITEM == 1:
 	CARE_ITEM_START = 9
@@ -58,9 +58,8 @@ def scale_down(my_data, fs_weight):
 
 def scale_up(my_data, fs_weight):
 	data_size = my_data.shape[0]
-	for i in range(data_size):
-		my_data[i] *= fs_weight[PM_POSITION][1]
-		my_data[i] += fs_weight[PM_POSITION][0]
+	my_data *= fs_weight[PM_POSITION][1]
+	my_data += fs_weight[PM_POSITION][0]
 	return
 
 def cal_y(my_x, weight, fs_weight):

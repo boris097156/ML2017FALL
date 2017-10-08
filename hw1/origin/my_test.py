@@ -12,13 +12,14 @@ CARE_HOUR = my.CARE_HOUR
 FEATURE_NUM = my.FEATURE_NUM
 WLOG_NAME = my.WLOG_NAME
 FWLOG_NAME = my.FWLOG_NAME
+hour_start = 9 - CARE_HOUR
 
 def reshape_test(test_data, test_x):
 	test_x[:, 0] = 1
 	for i in range(240):
 		for item in range(CARE_ITEM):
 			for hour in range(CARE_HOUR):
-				test_x[i][item*CARE_HOUR+hour+1] = test_data[item][i*CARE_HOUR+hour]
+				test_x[i][item*CARE_HOUR+hour+1] = test_data[item][i*9+hour_start+hour]
 
 def csv_result(test_y):
 	with open(OUTPUT_NAME, 'w') as csv_file:
@@ -30,7 +31,7 @@ def csv_result(test_y):
 def main():
 	#read in test.csv
 	test_data = my.read_csv(INPUT_NAME, 2, 11)
-
+	
 	#feature scaling
 	fs_weight = np.loadtxt(FWLOG_NAME, delimiter=',').reshape(CARE_ITEM,2)
 	my.scale_down(test_data, fs_weight)
@@ -38,7 +39,7 @@ def main():
 	#reshape test
 	test_x = np.zeros([240, FEATURE_NUM], dtype=np.float64)
 	reshape_test(test_data, test_x)
-	
+
 	weight = np.loadtxt(WLOG_NAME, delimiter=',')
 	
 	#test & scale up
