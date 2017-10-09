@@ -4,10 +4,6 @@ import numpy as np
 #Basic variables
 ITEM_NUM = 18
 LOG_NUM = 3
-DIR = '5*18'
-LOG_NAME = DIR + '/log/log'
-WLOG_NAME = DIR + '/weight.out'
-FWLOG_NAME = DIR + '/fs_weight.out'
 
 CARE_HOUR = 5
 CARE_ITEM = 18
@@ -16,6 +12,11 @@ if CARE_ITEM == 1:
 	CARE_ITEM_START = 9
 PM_POSITION = 9 - CARE_ITEM_START
 FEATURE_NUM = 1 + CARE_HOUR*CARE_ITEM
+
+DIR = str(CARE_HOUR)+'*'+str(CARE_ITEM)
+LOG_NAME = DIR + '/log/log'
+WLOG_NAME = DIR + '/weight.out'
+FWLOG_NAME = DIR + '/fs_weight.out'
 
 def read_csv(file_name, start, end):
 	origin_data = [[] for _ in range(ITEM_NUM)]
