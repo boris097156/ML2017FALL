@@ -1,5 +1,5 @@
 train/valid: 5000/652
-features: 91 (O3, PM10, PM2.5, with quadratic formula and all combined)
+features: 91 (O3, PM10, PM2.5, with quadratic formula and all combined )
 care hour: 9
 care item: 10
 learn_rate: 0.09557689195910296
