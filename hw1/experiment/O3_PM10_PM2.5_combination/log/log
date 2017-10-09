@@ -1,0 +1,11 @@
+train/valid: 5000/652
+features: 91 (O3, PM10, PM2.5, with quadratic formula and all combined)
+care hour: 9
+care item: 10
+learn_rate: 0.09557689195910296
+init_weight: 0.026809194315368268
+landa: 0.0001
+laps: 2000	RMSE: 5.85438171872
+laps: 2000	RMSE: 5.87719367922
+laps: 2000	RMSE: 5.8988976105
+laps: 2000	RMSE: 5.87514407806
