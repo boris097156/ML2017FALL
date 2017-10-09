@@ -3,13 +3,13 @@ import numpy as np
 
 #Basic variables
 ITEM_NUM = 18
-LOG_NUM = 3
+LOG_NUM = 1
 
 #Change variables here
 CARE_HOUR = 9
 CARE_ITEM = 10
 PM_POSITION = 2
-DIR = 'O3_PM10_PM2.5_combination-2'
+DIR = 'O3_PM10_PM2.5_combination-7500'
 
 FEATURE_NUM = 1 + CARE_HOUR*CARE_ITEM
 LOG_NAME = DIR + '/log/log'

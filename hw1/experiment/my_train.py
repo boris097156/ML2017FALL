@@ -24,8 +24,9 @@ BATCH_SIZE = 100
 ELTA = np.random.random_sample()/2
 INIT_W = np.random.random_sample()/2
 LANDA = 0.0001
-THR_LAP = 2000
+THR_LAP = 7500
 THR_RMSE = 0
+LOG_NUM = my.LOG_NUM
 
 def log_init(log_name):
 	with open(log_name, 'w') as log:
@@ -102,7 +103,7 @@ def train(data_x, data_y, weight, fs_weight, i):
 				return
 
 def opt_train(data_x, data_y, weight, fs_weight):
-	for i in range(3):
+	for i in range(LOG_NUM):
 		train(data_x, data_y, weight, fs_weight, i)
 		weight = np.full((FEATURE_NUM,), INIT_W, dtype=np.float64)
 	TRAIN_NUM = DATA_NUM
