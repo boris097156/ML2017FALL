@@ -24,7 +24,7 @@ BATCH_SIZE = 100
 ELTA = np.random.random_sample()/2
 INIT_W = np.random.random_sample()/2
 LANDA = 0.0001
-THR_LAP = 7500
+THR_LAP = 6000
 THR_RMSE = 0
 LOG_NUM = my.LOG_NUM
 
@@ -71,7 +71,7 @@ def train(data_x, data_y, weight, fs_weight, i):
 	train_y = data_y[:TRAIN_NUM]
 	batch_x = np.zeros([BATCH_SIZE ,FEATURE_NUM], dtype=np.float64)
 	batch_y = np.zeros([BATCH_SIZE], dtype=np.float64)	
-
+	print(weight.shape)
 	with open(log_name, 'a') as log:
 		prev_gra = np.zeros((FEATURE_NUM,), dtype=np.float64)
 		eta = ELTA
@@ -82,7 +82,7 @@ def train(data_x, data_y, weight, fs_weight, i):
 			for i in range(int(TRAIN_NUM/BATCH_SIZE)):
 				gen_batch(train_x, train_y, batch_x, batch_y)
 				my_y = np.dot(batch_x, weight)
-				gra = 2*(np.dot(batch_x.transpose(), (my_y-batch_y)) + LANDA*weight)
+				gra = 2*(np.dot(batch_x.transpose(), (my_y-batch_y)) + LANDA*np.concatenate((np.array([0]), weight[1:])))
 				prev_gra += gra**2
 				sigma = np.sqrt(prev_gra)
 				weight -= eta*gra/sigma		
