@@ -1,0 +1,9 @@
+train/valid: 5000/652
+features: 91
+care hour: 9
+care item: 10
+learn_rate: 0.3408174513877039
+init_weight: 0.44839124769019384
+landa: 0.0001
+laps: 6000	RMSE: 5.88188546002
+laps: 6000	RMSE: 5.85332165083
