@@ -23,13 +23,10 @@ CHECK_NAME = 'check.h5'
 def RMSE(y_true, y_pred):
     return K.sqrt(K.mean((y_pred-y_true)**2))
 
-def read_data(file_name):
+def read_data(file_name, is_train):
     users=[]
     movies=[]
     rating=[]
-    is_train = False
-    if file_name.find('train') >= 0:
-        is_train = True
     with open(file_name, 'r', encoding='ISO-8859-1') as f:
         f.readline()
         lines = f.readlines()
@@ -61,7 +58,7 @@ def my_shuffle(users, movies, ratings):
     return np.asarray(u), np.asarray(m), np.asarray(r)
 
 def train():
-    users, movies, ratings = read_data('train.csv')
+    users, movies, ratings = read_data('train.csv', True)
     max_user = int(np.amax(np.array(users, dtype='int')))
     max_movie = int(np.amax(np.array(movies, dtype='int')))
     users, movies, ratings = my_shuffle(users, movies, ratings)
@@ -97,7 +94,7 @@ def train():
     '''
 
 def test():
-    users, movies = read_data(sys.argv[1])
+    users, movies = read_data(sys.argv[1], False)
     model = load_model(MODEL_NAME, custom_objects={'RMSE': RMSE})
     ans = model.predict([users, movies])
     ans = ans.reshape(ans.shape[0],)
