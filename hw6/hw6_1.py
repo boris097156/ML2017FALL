@@ -13,11 +13,12 @@ REC_NUM = 4
 
 def read_images():
 	imgs = []
-	for i in range(IMG_AMOUNT):
-		img_name = os.path.join(IMG_DIR, (str(i)+'.jpg'))
-		#img_name = IMG_DIR + str(i) + '.jpg'
-		img = io.imread(img_name)
-		imgs.append(img)
+	for f in os.listdir(IMG_DIR):
+		print(f)
+		if '.jpg' in f:
+			img_name = os.path.join(IMG_DIR, f)
+			img = io.imread(img_name)
+			imgs.append(img)
 	return np.asarray(imgs, dtype=np.float64)
 
 def save_img(img, name):
