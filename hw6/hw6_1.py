@@ -14,7 +14,7 @@ REC_NUM = 4
 def read_images():
 	imgs = []
 	for f in os.listdir(IMG_DIR):
-		print(f)
+		#print(f)
 		if '.jpg' in f:
 			img_name = os.path.join(IMG_DIR, f)
 			img = io.imread(img_name)
