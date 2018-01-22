@@ -154,7 +154,6 @@ def main(argv):
                             word2vec7 = Word2Vec.load(argv.load_word2vec7)
                             word2vecs.append(word2vec7)    
 
-    #seg_test_path = os.path.join(argv.data_dir, argv.seg_test)
     dialogues, options = read_cut(argv.seg_test)
     #word_freq = cal_frequency(argv)
     word_freq = np.load('../model/word_freq.npy').item()
@@ -164,9 +163,7 @@ def main(argv):
         sim1 = model_predict(word2vecs[i], dialogues, options, word_freq)
         sim.append(sim1)
 
-    #predicts = max_similarity(sim, model_num)
     predicts = fair_voting(sim, model_num)
-    #predicts = avg_similarity(sim, model_num)
 
     dumpPrediction(argv.output_csv, predicts)
 
